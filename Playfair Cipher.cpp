@@ -12,7 +12,7 @@ int main(){
     cout<<"Masukkan Kunci"<<endl;
     string key;
     cin>>key;
-    
+    cout<<"Hasil"<<endl;
     for(i=0;i<origin.size();i++){
         if(origin[i]!=' ')
             s+= origin[i];
