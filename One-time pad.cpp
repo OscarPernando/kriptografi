@@ -1,76 +1,78 @@
-#include<iostream>
-#include<vector>
-#include<stdlib.h>
+#include <bits/stdc++.h>
+
 using namespace std;
-void to_upper_case(vector<char>& text, int len)
+
+string One_Time_Pad_Encription(string plainText, string keyvalues)
 {
-    for (int i = 0; i < len; i++)
-    {
-        if (text[i] >= 97 && text[i] <= 122)
-            text[i] -= 32;
+
+    string withoutSpacePlainText = "";
+    string withoutSpaceKeyvalues = "";
+
+    for(int i = 0; i < plainText.size(); i++){
+        if((plainText[i] >= 'A' && plainText[i] <= 'Z') || (plainText[i] >= 'a' && plainText[i] <= 'z')){
+            withoutSpacePlainText += toupper(plainText[i]);
+        }
     }
-}
-void print_string(vector<char> text, int len)
-{
-    for (int i = 0; i < len; i++)
-    {
-        cout << (char) (text[i] + 65);
+
+    for(int i = 0; i < keyvalues.size(); i++){
+        if((keyvalues[i] >= 'A' && keyvalues[i] <= 'Z') || (keyvalues[i] >= 'a' && keyvalues[i] <= 'z')){
+            withoutSpaceKeyvalues += toupper(keyvalues[i]);
+        }
     }
-    cout << endl;
-    return;
-}
-size_t get_input(vector<char>& msg)
-{
-    char a;
-    while (1)
-    {
-        a = getchar();
-        if (a == '\n')
-            break;
-        msg.push_back(a);
+
+    int ln1 = withoutSpacePlainText.size();
+    int ln2 = withoutSpaceKeyvalues.size();
+
+    string newKeyValues = "", finalKeyValues = "";
+
+    if(ln1 > ln2){
+        int extra = ln1 - ln2;
+
+        int extratime = extra / ln2;
+        if(extra % ln2 != 0) extratime++;
+
+        int cnt = 0;
+        while (cnt <= extratime){
+            for(int i = 0; i < ln2; i++){
+                newKeyValues += withoutSpaceKeyvalues[i];
+            }
+            cnt++;
+        }
+        for(int i = 0; i < ln1; i++){
+            finalKeyValues += newKeyValues[i];
+        }
     }
-    return msg.size();
+    else if(ln1 <= ln2){
+        for(int i = 0; i < ln1; i++){
+            finalKeyValues += withoutSpaceKeyvalues[i];
+        }
+    }
+
+    string ansCipherText = "";
+    for(int i = 0; i < ln1; i++){
+        int sum = ((withoutSpacePlainText[i] - 'A') + (finalKeyValues[i] - 'A') + 1) % 26;
+        ansCipherText += (sum + 'A');
+    }
+
+    cout << "Plain Text : Key Text ..." << endl;
+    cout << withoutSpacePlainText << " " << finalKeyValues << endl;
+
+    return ansCipherText;
 }
+
+
+
 int main()
 {
-    vector<char> msg;
-    vector<char> enc_msg;
-    vector<char> dec_msg;
-    int *p;
-    int i;
-    size_t len;
-    cout << "Enter Message to Encrypt:";
-    len = get_input(msg);
-    to_upper_case(msg, len);
-    p = (int*) malloc(msg.size() * sizeof(int));
-    for (i = 0; i < len; i++)
-    {
-        p[i] = rand() % 26;
-        if (msg[i] >= 65 && msg[i] <= 90)
-            enc_msg.push_back((char) ((msg[i] - 65 + p[i]) % 26));
-        else if (msg[i] >= 97 && msg[i] <= 122)
-            enc_msg.push_back((char) ((msg[i] - 97 + p[i]) % 26));
-        else
-            enc_msg.push_back((char) msg[i]);
-    }
-    cout << "\nEncoded Message:";
-    print_string(enc_msg, len);
-    cout << "\nKey for decryption:\n";
-    for (i = 0; i < len; i++)
-    {
-        cout << (char) (p[i] + 65);
-    }
-    cout << endl;
-    cout << "\nDecrypted Message:";
-    for (i = 0; i < len; i++)
-    {
-        if ((enc_msg[i] - p[i]) < 0)
-            dec_msg.push_back((char) (enc_msg[i] - p[i] + 26));
-        else if ((enc_msg[i] - p[i]) >= 0)
-            dec_msg.push_back((char) (enc_msg[i] - p[i]));
-        else
-            dec_msg.push_back((char) enc_msg[i]);
-    }
-    print_string(dec_msg, len);
-    return 0;
+    string plaintext, keyvalue;
+
+    cout << "Masukkan Teks..." << endl;
+    getline(cin, plaintext);
+
+    cout << "Masukkan Kunci..." << endl;
+    getline(cin, keyvalue);
+
+    string ans = One_Time_Pad_Encription(plaintext, keyvalue);
+    cout << "Cipher Text..." << endl;
+    cout << ans << endl;
 }
